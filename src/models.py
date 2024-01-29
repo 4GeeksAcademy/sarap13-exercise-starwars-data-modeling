@@ -28,6 +28,16 @@ class People(Base):
     id_starships = Column(Integer, ForeignKey('starships.id'))
     id_species = Column(Integer, ForeignKey('species.id'))
     id_vehicles = Column(Integer, ForeignKey('vehicles.id'))
+    # Este codigo nos ayuda a relacionar tablas. Siempre va el modelo/tabla padre la primera letra mayuscula
+    #  el primer '' de donde traemos la info , el segundo la tabla que coge la info y es el nombre de la tabla en min
+    #  y el lazy= True....?
+    # Esto genera otra columna con la información de la tabla people
+    people_favorites = relationship('Favorites', backref='people', lazy=True)
+    # En este caso traemos a la tabla people los vehiculos que cada uno utiliza.
+    vehicles = relationship('Vehicles', backref='people', lazy=True)
+    species = relationship('Species', backref='people', lazy=True)
+    starships = relationship('Starships', backref='people', lazy=True)
+
 
 
 
@@ -50,6 +60,10 @@ class Planets(Base):
     url = Column(String(250), nullable=False)
     id_people = Column(Integer, ForeignKey('people.id'))
     id_films = Column(Integer, ForeignKey('films.id'))
+    planets_favorites = relationship('favorites', backref='planets', lazy=True)
+    people = relationship('People', backref='planets', lazy=True)
+
+
 
 
 class Vehicles(Base):
@@ -73,6 +87,8 @@ class Vehicles(Base):
     url = Column(String(250), nullable=False)
     id_people = Column(Integer, ForeignKey('people.id'))
     id_films = Column(Integer, ForeignKey('films.id'))
+    vehicles_favorites = relationship('favorites', backref='vehicles', lazy=True)
+
 
 
 class Species(Base):
@@ -95,6 +111,8 @@ class Species(Base):
     url = Column(String(250), nullable=False)
     id_people = Column(Integer, ForeignKey('people.id'))
     id_films = Column(Integer, ForeignKey('films.id'))
+    vehicles_favorites = relationship('favorites', backref='vehicles', lazy=True)
+
 
 
 class Films(Base):
@@ -117,6 +135,17 @@ class Films(Base):
     id_species = Column(Integer, ForeignKey('species.id'))
     id_starships = Column(Integer, ForeignKey('starships.id'))
 
+    films_favorites = relationship('favorites', backref='films', lazy=True)
+    people = relationship('People', backref='films', lazy=True)
+    planets = relationship('Planets', backref='films', lazy=True)
+    vehicles = relationship('Vehicles', backref='films', lazy=True)
+    species = relationship('Species', backref='films', lazy=True)
+    starships = relationship('Starships', backref='films', lazy=True)
+
+
+
+
+
 class Starships(Base):
     __tablename__ = 'starships'
     id = Column(Integer, primary_key=True)
@@ -138,24 +167,28 @@ class Starships(Base):
     url = Column(String(250), nullable=False)
     id_people = Column(Integer, ForeignKey('people.id'))
     id_films = Column(Integer, ForeignKey('films.id'))
+    starships_favorites = relationship('favorites', backref='starships', lazy=True)
+
 
 class Favorites(Base):
     __tablename__ = 'favorites'
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    id_user = Column(Integer, ForeignKey('user.id'))
+    id = Column(Integer, primary_key=True, nullable=True)
+    id_user = Column(Integer, ForeignKey('user.id'), , nullable=True)
     id_people = Column(Integer, ForeignKey('people.id'))
     id_vehicles = Column(Integer, ForeignKey('vehicles.id'))
     id_species = Column(Integer, ForeignKey('species.id'))
     id_films = Column(Integer, ForeignKey('films.id'))
     id_starships = Column(Integer, ForeignKey('starships.id'))
 
-class User(Base):
+class Users(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
     password = Column(String(250), nullable=False)
+    favorites_user = relationship('favorites', backref='users', lazy=True)
+
 
 
 
